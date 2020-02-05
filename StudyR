@@ -1,0 +1,407 @@
+a<-3
+a
+b<-4
+b
+a+b
+c<-a+b
+a<-'R'
+e<-NA
+e
+is.na(v1)
+ls()
+rm(list=ls())
+
+v1<-c(1,3,15)
+v1
+
+v3<-c(1,T,TRUE,F,FALSE)
+v3
+v4<-c(1,TRUE,FALSE,"가")
+v4
+
+v5<-c(1:5)
+v6<-1:10
+v7<-c(1:5,2)
+v8<-seq(1:20)
+v9<-seq(from=1,to=20,by=2)
+v9
+
+
+install.packages("ggplot2")
+library(ggplot2)
+?ggplot2
+
+char_freq<-c("a","a","b","c")
+qplot(char_freq)
+
+?mpg
+qplot(data=mpg, x=hwy)
+qplot(data=mpg, x=drv, y=hwy, geom = "boxeplot", colour=drv)
+
+english<-c(90,80,60,70)
+english
+math<-c(50,60,100,20)
+math
+
+df_midterm<-data.frame(english,math)
+df_midterm
+class<-c(1,1,2,2)
+class
+df_midterm<-data.frame(english,math,class)
+df_midterm
+math
+df_midterm$math
+mean(df_midterm$english)
+df_midterm[c("math","class")]
+df_midterm[3,2]
+df_midterm[c(3,1),c(2,1,3)]
+
+df_midterm[c(1,3), c("math", "class")]
+
+install.packages("readxl")
+library(readxl)
+df_exam<-read_excel("excel_exam.xlsx")
+df_exam
+df_exam_novar<-read_excel("excel_exam_novar.xlsx", col_names = F)
+
+
+df_csv_exam<-read.csv("csv_exam.csv")
+df_csv_exam
+
+?airquality
+View(airquality)
+airquality
+ls(airquality) #변수를 정리 
+#r에서 변수 열, Object 라고 한다.
+names(airquality) # 있는대로 보여줌
+
+head(airquality, 3)
+tail(airquality, 3)
+class(airquality) # type of
+dim(airquality) # 몇행몇열인지 알 수 있다
+str(airquality)
+summary(airquality)
+install.packages("foreign")
+
+library(foreign) #SPSS 파일 불러오기
+library(dplyr) #전처리
+library(ggplot2) #시각화
+library(readxl) #엑셀 파일 불러오기
+
+raw_welfare<-
+read.spss(file="Koweps_hpc13_2018_beta1.sav", to.data.frame = T)
+# SPSS파일을 데이터프레임으로 변환 옵션(안 쓰면 list로 됨)
+raw_welfare
+welfare <- raw_welfare #복사본 사용이 좋음.
+
+install.packages("dplyr")
+library(dplyr)
+
+exam<-read.csv("csv_exam.csv")
+exam
+View(exam)
+# exam 에서 class가 1인 것들만 filter 한다.
+exam%>%filter(class==1)
+# ctrl + shift + m [pipe]
+exam %>% filter(math > 50)
+exam %>% select(1)
+# 행을 추출할 때 filter
+# 열을 추출할 때 select
+exam %>% select(class,math,english)
+exam %>% select(-english)
+exam %>% 
+  filter(class==1) %>% 
+  select(english) 
+exam %>% 
+  select(id,math) %>% 
+  head
+
+arrange(exam,desc(math))
+exam %>% 
+  mutate(total=math+english+science) %>% 
+  head
+head(exam)
+%>%  == 
+exam$total<-exam$math + exam$english + exam$science
+head(exam)
+exam %>% 
+  mutate(test=ifelse(science>=60, "pass", "fail"))
+
+View(raw_welfare)
+exam %>% summarise(mean_math=mean(math))
+exam %>% 
+  group_by(class) %>% 
+  summarise(mean_math=mean(math))
+
+df<-data.frame(sex=c("M","F",NA,"M","F"),
+               score=c(5,4,3,4,NA))
+df
+is.na(df)
+table(is.na(df))
+table(is.na(df$sex))
+mean(df$score)
+df %>% filter(is.na(score))
+df %>% filter(!is.na(score))
+df_nomiss<-df %>% filter(!is.na(score))
+mean(df_nomiss$score)
+df_nomiss<-df %>% filter(!is.na(score)&!is.na(sex))
+df_nomiss
+df_nomiss2<-na.omit(df)
+df_nomiss2
+mean(df$score,na.rm=T)
+sum(df$score,na.rm=T)
+
+outlier<-data.frame(sex=c(1,2,1,3,2,1), 
+                    score=c(5,4,3,4,2,6))
+outlier
+# table() - 빈도표 출력 : 윗줄 = 변수값의 값
+table(outlier$sex) #outlier 에 무엇이 있는지 
+table(outlier$score)
+
+outlier$sex<-ifelse(outlier$sex==3,NA,outlier$sex)
+outlier
+outlier$score<-ifelse(outlier$score>5,NA,outlier$score)
+outlier
+
+# 성별에 따른 score 평균 
+outlier %>% 
+  filter(!is.na(sex)&!is.na(score)) %>% 
+  group_by(sex) %>% 
+  summarise(mean_score=mean(score))
+
+library(ggplot2)
+mpg<-as.data.frame(ggplot2::mpg)
+mpg
+table(mpg$hwy)
+boxplot(mpg$hwy)$stats
+
+mpg$hwy<-ifelse(mpg$hwy<12|mpg$hwy>37,NA,mpg$hwy)
+# 상자 그림을 이용해 극단치 경계 범위를 벗어난 값을 결측 처리
+table(is.na(mpg$hwy))
+
+# 이상치는 무조건 NA 처리
+# 극단치는 데이터를 기준을 정하고 결측 처리
+
+# 그래프 참고 사이트
+https://www.r-graph-gallery.com/index.html
+http://www.ggplot2-exts.org/gallery/
+
+# 1) 배경설정 (고속도로에서 배기량에 따라 다른 점이 무엇인가)
+ggplot(data=mpg, aes(x=displ, y=hwy))
+# 2) 그래프 설정 (산점도)
+ggplot(data=mpg, aes(x=displ, y=hwy)) + geom_point()
+ggplot(data=mpg, aes(x=displ, y=hwy)) + geom_point() + xlim(3,6)
+# 전처리단계에서 데이터를 빠르게 확인해 보는 용도로 활용
+qplot(data=mpg, x=displ, y=hwy)
+
+# 막대그래프
+library(dplyr)
+mpg<-as.data.frame(ggplot2::mpg) # Reload 필요
+df_mpg<- mpg %>% 
+  group_by(drv) %>% 
+  summarise(mean_hwy = mean(hwy))
+ggplot(data=df_mpg, aes(x=drv, y=mean_hwy)) + geom_col()
+# 빈도 막대 그래프
+ggplot(data=mpg, aes(x=drv, y=hwy)) + geom_bar()
+# 선그래프 (시간에 따라 달라지는 데이터 표현하기)
+ggplot(data=economics, aes(x=date,y=unemploy)) + geom_line()ggplot(data=df_mpg, aes(x=drv, y=mean_hwy)) + geom_col()
+# 상자그림 
+# outlier(이상치, 극단치)
+
+head(welfare)
+tail(welfare)
+View(welfare)
+dim(welfare) # 데이터 프레임에 몇 행 몇 열이 있는지 알 수 있다.
+str(welfare)# 데이터에 들어있는 변수들의 속성을 보여줌
+summary(welfare) # 변수의 값을 요약한 '요약 통계량' 산출 함수
+
+welfare$h13_g3
+welfare<-rename(welfare, 
+                sex=h13_g3,
+                birth=h13_g4,
+                marriage=h13_g10,
+                religion=h13_g11,
+                income=p1302_8aq1,
+                code_job=h13_eco9,
+                code_region=h13_reg7)
+
+welfare$marriage
+welfare$birth
+
+# 데이터 분석 절차
+# 1단계 - 변수 검토 및 전처리
+# 2단계 - 변수 간 관계 분석
+class(welfare$sex)
+table(welfare$sex) # table 은 빈도표이다.
+welfare$sex<-ifelse(welfare$sex==9,NA,welfare$sex) # 이상치 결측 처리
+table(is.na(welfare$sex))
+
+welfare$sex<-ifelse(welfare$sex==1,'male','female')
+table(welfare$sex)
+qplot(welfare$sex)
+class(welfare$income)
+summary(welfare$income)
+qplot(welfare$income)
+qplot(welfare$income) + xlim(0,1000)
+
+welfare$income<-ifelse(welfare$income %in% c(0,9999),NA
+                       welfare$income                       )
+
+table(is.na(welfare$income))
+table(welfare$income)
+
+# 성별에 따라 월급이 다를까? 
+sex_income<-welfare %>% 
+  filter(!is.na(income)) %>% 
+  group_by(sex) %>% 
+  summarise(mean_income=mean(income))
+sex_income
+
+ggplot(data=sex_income,aes(x=sex,y=mean_income)) + geom_col()
+
+# 몇 살 때 
+table(welfare$birth)
+welfare$age<-2018-welfare$birth+1
+summary(welfare$age)
+qplot(welfare$age)
+
+welfare<-welfare %>% 
+  mutate(ageg=ifelse(age<30,"young",
+                     ifelse(age<=59,"middle","old")))
+table(welfare$ageg)
+
+크롤링
+https://blog.naver.com/schatz37/221777840298
+===========================================================
+
+https://blog.naver.com/schatz37/221777840298
+
+
+
+  
+
+[R.크롤링] 뉴스 기사 크롤러 만들기 (HTML 에서 URL, 본문 수집하기)
+
+지난 시간에 크롤링을 위한 기본적인 내용들에 대해서 알아보았다.URL과 HTML 에 대해 아무것도 모...
+
+blog.naver.com
+
+첨부파일
+
+crawling.R
+
+파일 다운로드
+
+​
+
+base_url<-'https://search.naver.com/search.naver?&where=news&query=%EC%86%8C%EB%B9%84%ED%8A%B8%EB%A0%8C%EB%93%9C&sm=tab_pge&sort=0&photo=0&field=0&reporter_article=&pd=3&ds=2019.01.01&de=2019.01.31&docid=&nso=so:r,p:from20190101to20190131,a:all&mynews=0&cluster_rank=29&start='
+
+​
+
+urls<- NULL
+
+for (x in (0:3)) {
+
+urls<-c(urls, paste(base_url, x*10+1,sep='' ))
+
+}
+
+​
+
+# urls
+
+​
+
+install.packages("tidyverse")
+
+library(tidyverse)
+
+# ?tidyverse
+
+​
+
+install.packages("rvest")
+
+library(rvest)
+
+# ?rvest
+
+​
+
+#뉴스기사 url 뽑기.
+
+news_links <-NULL
+
+for(url in urls) {
+
+html <-read_html(url)
+
+news_links<-c(news_links, html %>% 
+
+html_nodes("ul.type01 > li > dl > dd > a") %>% 
+
+html_attr("href"))
+
+}
+
+​
+
+#news_links
+
+​
+
+​
+
+#내용
+
+Contents<-NULL
+
+Title<-NULL
+
+​
+
+for(link in news_links) {
+
+html<-read_html(link)
+
+#본문.
+
+Contents<-c(Contents, html %>% 
+
+html_nodes('._article_body_contents') %>% 
+
+html_text())
+
+#제목.
+
+Title<-c(Title, html %>% html_nodes('#articleTitle') %>% 
+
+html_text())
+
+}
+
+​
+
+Contents <- as.data.frame(Contents)
+
+title<-as.data.frame(Title)
+
+news<-cbind(title, Contents)
+
+​
+
+# Contents
+
+# title
+
+# news
+
+
+
+
+
+
+
+
+
+
